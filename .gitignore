@@ -50,8 +50,6 @@ moc_*.h
 qrc_*.cpp
 ui_*.h
 Makefile*
-*~
-core
 *.core
 *.pro.user
 *.pro.user.*
