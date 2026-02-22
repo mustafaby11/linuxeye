@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
+<policyconfig>
+
+  <vendor>linuxeye</vendor>
+  <vendor_url>https://github.com/mustafaby11/linuxeye</vendor_url>
+
+  <action id="io.linuxeye.collect">
+    <description>Collect privileged system information</description>
+    <message>linuxeye needs elevated privileges to read hardware serial numbers and MSR registers.</message>
+    <icon_name>computer</icon_name>
+    <defaults>
+      <!-- Active console session: show auth dialog -->
+      <allow_active>auth_admin</allow_active>
+      <!-- Inactive/remote session: deny -->
+      <allow_inactive>no</allow_inactive>
+      <!-- No session: deny  -->
+      <allow_any>no</allow_any>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/local/bin/linuxeye-helper</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+
+</policyconfig>
