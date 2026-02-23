@@ -47,12 +47,7 @@ void OsCollector::parseOsRelease()
         if      (key == QLatin1String("NAME"))          m_distroName    = value;
         else if (key == QLatin1String("VERSION"))       m_distroVersion = value;
         else if (key == QLatin1String("ID"))            m_distroId      = value;
-        else if (key == QLatin1String("PRETTY_NAME")) {
-            m_distroPrettyName = value;
-            if (m_distroName.isEmpty()) m_distroName = value;
-        }
-        else if (key == QLatin1String("ANSI_COLOR"))    m_distroAnsiColor = value;
-        else if (key == QLatin1String("BUG_REPORT_URL")) m_bugReportUrl = value;
+        else if (key == QLatin1String("HOME_URL"))      m_homeUrl       = value;
     }
 }
 

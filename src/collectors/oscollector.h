@@ -15,9 +15,7 @@ public:
     QString distroName()    const { return m_distroName; }
     QString distroVersion() const { return m_distroVersion; }
     QString distroId()      const { return m_distroId; }
-    QString distroPrettyName() const { return m_distroPrettyName; }
-    QString distroAnsiColor()  const { return m_distroAnsiColor; }
-    QString bugReportUrl()     const { return m_bugReportUrl; }
+    QString homeUrl()          const { return m_homeUrl; }
     QString distroLogoPath()   const { return m_distroLogoPath; }
 
     QString kernelVersion() const { return m_kernelVersion; }
@@ -33,9 +31,7 @@ private:
     QString m_distroName;
     QString m_distroVersion;
     QString m_distroId;
-    QString m_distroPrettyName;
-    QString m_distroAnsiColor;
-    QString m_bugReportUrl;
+    QString m_homeUrl;
     QString m_distroLogoPath;
 
     QString m_kernelVersion;

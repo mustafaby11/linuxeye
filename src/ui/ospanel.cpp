@@ -65,22 +65,7 @@ OsPanel::OsPanel(QWidget *parent) : QWidget(parent)
         form->setSpacing(8);
         for (const auto &row : rows) {
             auto *val = new QLabel(row.second.isEmpty() ? QStringLiteral("N/A") : row.second);
-            
-            // Format URL as a clickable link if applicable
-            if (row.first == QLatin1String("Bug Report")) {
-                val->setText(QStringLiteral("<a href='%1' style='font-weight:bold;'>%1</a>").arg(row.second));
-                val->setOpenExternalLinks(true);
-            } else if (row.first == QLatin1String("Pretty Name")) {
-                const QString ansiColor = os->distroAnsiColor();
-                if (!ansiColor.isEmpty()) {
-                    val->setStyleSheet(StyleHelper::valueHighlight());
-                } else {
-                    val->setStyleSheet(StyleHelper::valueText());
-                }
-            } else {
-                val->setStyleSheet(StyleHelper::valueText());
-            }
-            
+            val->setStyleSheet(StyleHelper::valueText());
             val->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
             form->addRow(new QLabel(QStringLiteral("<b>%1</b>").arg(row.first)), val);
             labels[row.first] = val;
@@ -91,12 +76,10 @@ OsPanel::OsPanel(QWidget *parent) : QWidget(parent)
     // ── Distribution section with logo inside the box ─────
     {
         const QList<QPair<QString,QString>> distroRows = {
-            {"Pretty Name", os->distroPrettyName()},
-            {"Name",        os->distroName()},
-            {"Version",     os->distroVersion()},
-            {"ID",          os->distroId()},
-            {"Color",       os->distroAnsiColor()},
-            {"Bug Report",  os->bugReportUrl()}
+            {"Name",     os->distroName()},
+            {"Version",  os->distroVersion()},
+            {"ID",       os->distroId()},
+            {"Home URL", os->homeUrl()}
         };
 
         auto *distroBox = new QGroupBox(QStringLiteral("Distribution"));
@@ -129,16 +112,9 @@ OsPanel::OsPanel(QWidget *parent) : QWidget(parent)
         for (const auto &row : distroRows) {
             auto *val = new QLabel(row.second.isEmpty() ? QStringLiteral("N/A") : row.second);
 
-            if (row.first == QLatin1String("Bug Report")) {
+            if (row.first == QLatin1String("Home URL") && !row.second.isEmpty()) {
                 val->setText(QStringLiteral("<a href='%1' style='font-weight:bold;'>%1</a>").arg(row.second));
                 val->setOpenExternalLinks(true);
-            } else if (row.first == QLatin1String("Pretty Name")) {
-                const QString ansiColor = os->distroAnsiColor();
-                if (!ansiColor.isEmpty()) {
-                    val->setStyleSheet(StyleHelper::valueHighlight());
-                } else {
-                    val->setStyleSheet(StyleHelper::valueText());
-                }
             } else {
                 val->setStyleSheet(StyleHelper::valueText());
             }
