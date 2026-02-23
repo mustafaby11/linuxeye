@@ -48,13 +48,13 @@ It is **not** just another system monitor. linuxeye is a **system observation pl
 ### Install dependencies (Ubuntu/Debian)
 
 ```bash
-sudo apt install qt6-base-dev cmake g++ ninja-build
+sudo apt install qt6-base-dev cmake g++ ninja-build git
 ```
 
 ### Install dependencies (Arch Linux)
 
 ```bash
-sudo pacman -S qt6-base cmake gcc ninja
+sudo pacman -S qt6-base cmake gcc ninja git
 ```
 
 ---
@@ -69,6 +69,12 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
 ./linuxeye
 ```
+
+---
+
+## Tested Linux distributions:
+- CachyOS
+- Pardus GNU/Linux 25 (bilge)
 
 ---
 
