@@ -4,6 +4,7 @@
 
 #include "basecollector.h"
 #include <QString>
+#include <QStringList>
 
 class OsCollector : public BaseCollector
 {
@@ -17,6 +18,7 @@ public:
     QString distroPrettyName() const { return m_distroPrettyName; }
     QString distroAnsiColor()  const { return m_distroAnsiColor; }
     QString bugReportUrl()     const { return m_bugReportUrl; }
+    QString distroLogoPath()   const { return m_distroLogoPath; }
 
     QString kernelVersion() const { return m_kernelVersion; }
     QString kernelArch()    const { return m_kernelArch; }
@@ -34,6 +36,7 @@ private:
     QString m_distroPrettyName;
     QString m_distroAnsiColor;
     QString m_bugReportUrl;
+    QString m_distroLogoPath;
 
     QString m_kernelVersion;
     QString m_kernelArch;
@@ -49,4 +52,5 @@ private:
     void parseUptime();
     void detectInitSystem();
     void detectWindowManager();
+    void findDistroLogo();
 };

@@ -4,6 +4,8 @@
 #include "fileutils.h"
 
 #include <QDir>
+#include <QDirIterator>
+#include <QFileInfo>
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <cstdlib>
@@ -25,6 +27,9 @@ void OsCollector::collect()
 
     // Shell
     m_shell = QString::fromLocal8Bit(qgetenv("SHELL"));
+
+    // Distro logo
+    findDistroLogo();
 }
 
 void OsCollector::parseOsRelease()
@@ -160,5 +165,75 @@ void OsCollector::detectWindowManager()
             sessionType[0] = sessionType[0].toUpper();
             m_windowManager += QStringLiteral(" (") + sessionType + QStringLiteral(")");
         }
+    }
+}
+
+void OsCollector::findDistroLogo()
+{
+    const QString id = m_distroId.toLower();
+    if (id.isEmpty()) return;
+
+    // Helper: check if a file exists and set the logo path
+    auto tryPath = [this](const QString &path) -> bool {
+        if (QFileInfo::exists(path)) {
+            m_distroLogoPath = path;
+            return true;
+        }
+        return false;
+    };
+
+    // 1) Direct match in /usr/share/icons/{id}.svg or .png
+    if (tryPath(QStringLiteral("/usr/share/icons/%1.svg").arg(id))) return;
+    if (tryPath(QStringLiteral("/usr/share/icons/%1.png").arg(id))) return;
+
+    // 2) Search hicolor icon theme – prefer larger resolutions
+    //    Look for icons named {id}, distributor-logo, or start-here
+    const QStringList iconNames = { id, QStringLiteral("distributor-logo"), QStringLiteral("start-here") };
+    const QStringList sizes = {
+        QStringLiteral("scalable"),
+        QStringLiteral("512x512"), QStringLiteral("256x256"),
+        QStringLiteral("128x128"), QStringLiteral("96x96"),
+        QStringLiteral("64x64"),   QStringLiteral("48x48")
+    };
+    const QString hicolorBase = QStringLiteral("/usr/share/icons/hicolor");
+
+    for (const QString &iconName : iconNames) {
+        for (const QString &sz : sizes) {
+            const QString dir = hicolorBase + '/' + sz + QStringLiteral("/apps");
+            if (!QDir(dir).exists()) continue;
+
+            // Check SVG first, then PNG
+            if (tryPath(dir + '/' + iconName + QStringLiteral(".svg"))) return;
+            if (tryPath(dir + '/' + iconName + QStringLiteral(".png"))) return;
+        }
+    }
+
+    // 3) Search /usr/share/pixmaps for {id}*
+    {
+        QDir pixmaps(QStringLiteral("/usr/share/pixmaps"));
+        if (pixmaps.exists()) {
+            const QStringList filters = {
+                id + QStringLiteral("*.svg"),
+                id + QStringLiteral("*.png"),
+                id + QStringLiteral("-logo*.svg"),
+                id + QStringLiteral("-logo*.png"),
+            };
+            const QStringList entries = pixmaps.entryList(filters, QDir::Files, QDir::Name);
+            if (!entries.isEmpty()) {
+                m_distroLogoPath = pixmaps.absoluteFilePath(entries.first());
+                return;
+            }
+        }
+    }
+
+    // 4) Fallback for Arch-based distros (CachyOS, EndeavourOS, etc.)
+    const QStringList archBased = {
+        QStringLiteral("cachyos"), QStringLiteral("endeavouros"),
+        QStringLiteral("manjaro"), QStringLiteral("garuda"),
+        QStringLiteral("arcolinux"), QStringLiteral("artix")
+    };
+    if (archBased.contains(id)) {
+        if (tryPath(QStringLiteral("/usr/share/pixmaps/archlinux-logo.svg"))) return;
+        if (tryPath(QStringLiteral("/usr/share/pixmaps/archlinux-logo.png"))) return;
     }
 }
