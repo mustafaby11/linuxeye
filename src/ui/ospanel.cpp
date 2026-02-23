@@ -91,7 +91,7 @@ OsPanel::OsPanel(QWidget *parent) : QWidget(parent)
         // Logo on the left (inside the box)
         const QString logoPath = os->distroLogoPath();
         if (!logoPath.isEmpty()) {
-            const int logoSize = 96;
+            const int logoSize = 128;
             QPixmap logoPm = loadDistroLogo(logoPath, logoSize);
             if (!logoPm.isNull()) {
                 auto *logoLabel = new QLabel();

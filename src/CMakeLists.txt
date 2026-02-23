@@ -4,7 +4,7 @@ add_subdirectory(core)
 add_subdirectory(ui)
 add_subdirectory(helper)
 
-add_executable(linuxeye main.cpp)
+add_executable(linuxeye main.cpp ${CMAKE_SOURCE_DIR}/resources.qrc)
 
 target_link_libraries(linuxeye
     PRIVATE

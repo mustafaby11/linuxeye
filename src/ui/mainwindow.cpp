@@ -23,6 +23,10 @@
 #include <QDateTime>
 #include <QIcon>
 #include <QTimer>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QSvgRenderer>
+#include <QPainter>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -83,10 +87,37 @@ void MainWindow::setupUi()
     m_privStatusLabel = new QLabel();
     m_privStatusLabel->setFixedSize(20, 20);
 
+    // GitHub link button
+    auto *githubBtn = new QPushButton();
+    githubBtn->setToolTip(QStringLiteral("View on GitHub"));
+    githubBtn->setFixedSize(28, 28);
+    githubBtn->setCursor(Qt::PointingHandCursor);
+    githubBtn->setFlat(true);
+    githubBtn->setStyleSheet(QStringLiteral(
+        "QPushButton { border: none; padding: 4px; border-radius: 4px; }"
+        "QPushButton:hover { background: palette(midlight); }"));
+
+    // Load GitHub icon from embedded resource
+    {
+        QSvgRenderer renderer(QStringLiteral(":/svg/github.svg"));
+        QPixmap pm(64, 64);
+        pm.fill(Qt::transparent);
+        QPainter painter(&pm);
+        renderer.render(&painter);
+        githubBtn->setIcon(QIcon(pm));
+        githubBtn->setIconSize(QSize(16, 16));
+    }
+
+    connect(githubBtn, &QPushButton::clicked, this, []() {
+        QDesktopServices::openUrl(QUrl(QStringLiteral("https://github.com/mustafaby11/linuxeye")));
+    });
+
     headerLayout->addWidget(logoLabel);
     headerLayout->addSpacing(8);
     headerLayout->addWidget(versionLabel);
     headerLayout->addStretch();
+    headerLayout->addWidget(githubBtn);
+    headerLayout->addSpacing(8);
     headerLayout->addWidget(m_privStatusLabel);
 
     rootLayout->addWidget(headerBar);
