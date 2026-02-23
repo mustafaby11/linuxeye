@@ -48,13 +48,13 @@ It is **not** just another system monitor. linuxeye is a **system observation pl
 ### Install dependencies (Ubuntu/Debian)
 
 ```bash
-sudo apt install qt6-base-dev cmake g++ ninja-build git
+sudo apt install qt6-base-dev qt6-svg-dev cmake g++ ninja-build git
 ```
 
 ### Install dependencies (Arch Linux)
 
 ```bash
-sudo pacman -S qt6-base cmake gcc ninja git
+sudo pacman -S qt6-base qt6-svg cmake gcc ninja git
 ```
 
 ---
