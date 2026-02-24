@@ -25,6 +25,7 @@ public:
     QString cacheL2()      const { return m_cacheL2; }
     QString cacheL3()      const { return m_cacheL3; }
     QStringList flags()    const { return m_flags; }
+    QString virtualization() const { return m_virtualization; }
 
 private:
     QString     m_modelName;
@@ -39,9 +40,11 @@ private:
     QString     m_cacheL2;
     QString     m_cacheL3;
     QStringList m_flags;
+    QString     m_virtualization;
 
     void parseFromProcCpuinfo();
     void parseCacheInfo();
     void parseFrequency();
     void parseArchitecture();
+    void detectVirtualization();
 };

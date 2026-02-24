@@ -4,6 +4,7 @@
 #include "fileutils.h"
 
 #include <QDir>
+#include <QFile>
 #include <QRegularExpression>
 #include <sys/utsname.h>
 
@@ -13,6 +14,7 @@ void CpuCollector::collect()
     parseCacheInfo();
     parseFrequency();
     parseArchitecture();
+    detectVirtualization();
 }
 
 void CpuCollector::parseFromProcCpuinfo()
@@ -96,4 +98,37 @@ void CpuCollector::parseArchitecture()
     struct utsname uts;
     if (uname(&uts) == 0)
         m_architecture = QString::fromLocal8Bit(uts.machine);
+}
+
+void CpuCollector::detectVirtualization()
+{
+    // Detect from CPU flags: vmx = Intel VT-x, svm = AMD-V
+    const bool hasVmx = m_flags.contains(QStringLiteral("vmx"));
+    const bool hasSvm = m_flags.contains(QStringLiteral("svm"));
+
+    QString tech;
+    if (hasVmx)
+        tech = QStringLiteral("VT-x (Intel)");
+    else if (hasSvm)
+        tech = QStringLiteral("AMD-V (AMD)");
+
+    if (tech.isEmpty()) {
+        m_virtualization = QStringLiteral("Not supported");
+        return;
+    }
+
+    // Check if KVM is available (/dev/kvm exists)
+    const bool kvmAvailable = QFile::exists(QStringLiteral("/dev/kvm"));
+
+    // Check if KVM module is loaded
+    const QString modules = FileUtils::readFile(QStringLiteral("/proc/modules"));
+    const bool kvmLoaded = modules.contains(QLatin1String("kvm_intel")) ||
+                           modules.contains(QLatin1String("kvm_amd"));
+
+    if (kvmAvailable && kvmLoaded)
+        m_virtualization = tech + QStringLiteral(" (Enabled, KVM active)");
+    else if (kvmAvailable)
+        m_virtualization = tech + QStringLiteral(" (Enabled, KVM available)");
+    else
+        m_virtualization = tech + QStringLiteral(" (Supported, KVM not loaded)");
 }

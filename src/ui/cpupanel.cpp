@@ -59,6 +59,7 @@ CpuPanel::CpuPanel(QWidget *parent) : QWidget(parent)
         cpu->curFreqMHz() > 0
             ? SizeFormatter::formatHz(quint64(cpu->curFreqMHz() * 1'000'000))
             : QStringLiteral("N/A"));
+    addRow("Virtualization",  cpu->virtualization());
     root->addWidget(genBox);
 
     // ── Cache ─────────────────────────────────────────────
