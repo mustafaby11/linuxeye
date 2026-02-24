@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=linuxeye
+GenericName=System Analyzer
+Comment=Linux system analysis and hardware diagnostics
+Exec=linuxeye
+Icon=computer
+Terminal=false
+Type=Application
+Categories=System;Monitor;HardwareSettings;
+Keywords=system;hardware;cpu;memory;gpu;sensor;diagnostics;
+StartupNotify=true

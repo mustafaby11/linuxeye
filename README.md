@@ -45,21 +45,30 @@ It is **not** just another system monitor. linuxeye is a **system observation pl
 - CMake ≥ 3.20
 - GCC ≥ 11 or Clang ≥ 13
 
-### Install dependencies (Ubuntu/Debian)
-
-```bash
-sudo apt install qt6-base-dev qt6-svg-dev cmake g++ ninja-build git
-```
-
-### Install dependencies (Arch Linux)
-
-```bash
-sudo pacman -S qt6-base qt6-svg cmake gcc ninja git
-```
-
 ---
 
-## Building
+## Installation
+
+### Quick Install (recommended)
+
+```bash
+git clone https://github.com/mustafaby11/linuxeye.git
+cd linuxeye
+./setup.sh --install
+```
+
+### setup.sh Options
+
+| Option | Description |
+|---|---|
+| `--install` | Build and install linuxeye to system |
+| `--installdep` | Install build dependencies only |
+| `--build` | Build the project (no system install) |
+| `--uninstall` | Remove linuxeye from system |
+| `--rmbuild` | Remove the build directory |
+| `--help` | Show help message |
+
+### Manual Build
 
 ```bash
 git clone https://github.com/mustafaby11/linuxeye.git
@@ -67,7 +76,7 @@ cd linuxeye
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
-./linuxeye
+./src/linuxeye
 ```
 
 ---
