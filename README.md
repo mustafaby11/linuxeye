@@ -27,14 +27,14 @@ It is **not** just another system monitor. linuxeye is a **system observation pl
 
 | Module | Data Collected |
 |---|---|
-| **CPU** | Model, cores/threads, frequency, cache, flags, CPUID |
+| **CPU** | Model, cores/threads, frequency, cache, flags, CPUID, Virtualization (VT-x / AMD-V, KVM status) |
 | **Memory** | Total/used/free RAM, swap, memory map |
 | **OS / Kernel** | Distro, kernel version, uptime, hostname, init system |
 | **Storage** | Disks, partitions, filesystems, mount points |
 | **Network** | Interfaces |
 | **GPU** | DRM/KMS info, VRAM |
 | **Motherboard** | DMI/SMBIOS – board, BIOS, chassis info |
-| **Sensors** | hwmon|
+| **Sensors** | hwmon |
 
 ---
 
