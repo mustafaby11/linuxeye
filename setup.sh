@@ -67,10 +67,16 @@ cmd_installdep() {
             $SUDO apt install -y \
                 qt6-base-dev qt6-svg-dev cmake g++ ninja-build git
             ;;
-        fedora|nobara|bazzite|silverblue)
+        fedora|nobara)
             info "Installing dependencies (dnf)..."
             $SUDO dnf install -y \
                 qt6-qtbase-devel qt6-qtsvg-devel cmake gcc-c++ ninja-build git
+            ;;
+        bazzite|silverblue)
+            info "Installing dependencies (rpm-ostree)..."
+            rpm-ostree install --idempotent \
+                qt6-qtbase-devel qt6-qtsvg-devel cmake gcc-c++ ninja-build git
+            warn "A reboot may be required for rpm-ostree changes to take effect"
             ;;
         opensuse*|suse*)
             info "Installing dependencies (zypper)..."
@@ -81,6 +87,11 @@ cmd_installdep() {
             info "Installing dependencies (xbps)..."
             $SUDO xbps-install -Sy \
                 qt6-base-devel qt6-svg-devel cmake gcc ninja git
+            ;;
+        gentoo)
+            info "Installing dependencies (emerge)..."
+            $SUDO emerge --noreplace \
+                dev-qt/qtbase dev-qt/qtsvg dev-build/cmake sys-devel/gcc dev-build/ninja dev-vcs/git
             ;;
         *)
             if [[ "$DISTRO_ID_LIKE" == *"arch"* ]]; then
@@ -185,6 +196,51 @@ cmd_rmbuild() {
     fi
 }
 
+# ── Uninstall dependencies ────────────────────────────────
+cmd_uninstalldep() {
+    detect_distro
+    need_root
+    info "Removing build dependencies..."
+
+    case "$DISTRO_ID" in
+        arch|cachyos|endeavouros|manjaro|garuda|arcolinux|artix)
+            $SUDO pacman -Rns --noconfirm \
+                qt6-base qt6-svg cmake ninja 2>/dev/null || true
+            ;;
+        ubuntu|debian|linuxmint|pop|zorin|elementary)
+            $SUDO apt remove -y \
+                qt6-base-dev qt6-svg-dev cmake ninja-build 2>/dev/null || true
+            $SUDO apt autoremove -y
+            ;;
+        fedora|nobara)
+            $SUDO dnf remove -y \
+                qt6-qtbase-devel qt6-qtsvg-devel cmake ninja-build 2>/dev/null || true
+            ;;
+        bazzite|silverblue)
+            rpm-ostree uninstall \
+                qt6-qtbase-devel qt6-qtsvg-devel cmake ninja-build 2>/dev/null || true
+            warn "A reboot may be required for rpm-ostree changes to take effect"
+            ;;
+        opensuse*|suse*)
+            $SUDO zypper remove -y \
+                qt6-base-devel qt6-svg-devel cmake ninja 2>/dev/null || true
+            ;;
+        void)
+            $SUDO xbps-remove -Ry \
+                qt6-base-devel qt6-svg-devel cmake ninja 2>/dev/null || true
+            ;;
+        gentoo)
+            $SUDO emerge --deselect \
+                dev-qt/qtbase dev-qt/qtsvg dev-build/cmake dev-build/ninja 2>/dev/null || true
+            ;;
+        *)
+            warn "Unknown distribution: cannot auto-remove dependencies"
+            ;;
+    esac
+
+    success "Build dependencies removed"
+}
+
 # ── Help ──────────────────────────────────────────────────
 cmd_help() {
     echo -e "${BOLD}${CYAN}"
@@ -196,25 +252,27 @@ cmd_help() {
     echo "Usage: $0 [OPTION]"
     echo ""
     echo "Options:"
-    echo "  --install      Build and install linuxeye to system"
-    echo "  --installdep   Install build dependencies only"
-    echo "  --build        Build the project (no system install)"
-    echo "  --uninstall    Remove linuxeye from system"
-    echo "  --rmbuild      Remove the build directory"
-    echo "  --help         Show this help message"
+    echo "  --install        Build and install linuxeye to system"
+    echo "  --installdep     Install build dependencies only"
+    echo "  --build          Build the project (no system install)"
+    echo "  --uninstall      Remove linuxeye from system"
+    echo "  --uninstalldep   Remove build dependencies"
+    echo "  --rmbuild        Remove the build directory"
+    echo "  --help           Show this help message"
     echo ""
 }
 
 # ── Main ──────────────────────────────────────────────────
 main() {
     case "${1:-}" in
-        --install)    cmd_install    ;;
-        --installdep) cmd_installdep ;;
-        --build)      cmd_build      ;;
-        --uninstall)  cmd_uninstall  ;;
-        --rmbuild)    cmd_rmbuild    ;;
-        --help)       cmd_help       ;;
-        *)            cmd_help       ;;
+        --install)      cmd_install      ;;
+        --installdep)   cmd_installdep   ;;
+        --build)        cmd_build        ;;
+        --uninstall)    cmd_uninstall    ;;
+        --uninstalldep) cmd_uninstalldep ;;
+        --rmbuild)      cmd_rmbuild      ;;
+        --help)         cmd_help         ;;
+        *)              cmd_help         ;;
     esac
 }
 
